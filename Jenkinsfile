@@ -1,12 +1,9 @@
-
 pipeline {
     agent any
 
     tools {
-    maven 'Maven 3.9.10'  // ✅ Match this exactly to what's defined in Jenkins
-    jdk 'JDK 17'          // ✅ Also make sure JDK 17 is correctly configured
-}
-
+        maven 'Maven 3.9.10'   // Update to match what's configured in Jenkins
+        jdk 'JDK 17'           // Update this name if needed
     }
 
     environment {
@@ -16,18 +13,17 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Automatically pulls from configured Git repo and branch
                 checkout scm
             }
         }
 
         stage('Build Strimzi Kafka Operator') {
             steps {
-                sh 'mvn clean install -B -DskipTests'
+                sh 'mvn clean install -DskipTests'
             }
         }
 
-        stage('Archive JARs') {
+        stage('Archive Artifacts') {
             steps {
                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
@@ -36,10 +32,7 @@ pipeline {
 
     post {
         success {
-            echo '✅ Strimzi Kafka Operator build successful!'
+            echo '✅ Build completed successfully.'
         }
         failure {
-            echo '❌ Build failed. Please check logs.'
-        }
-    }
-}
+            echo '❌ Build f
