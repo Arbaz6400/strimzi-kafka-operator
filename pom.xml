@@ -1155,24 +1155,7 @@
                     <excludeFilterFile>${project.basedir}/../.spotbugs/spotbugs-exclude.xml</excludeFilterFile>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>${maven.dependency.version}</version>
-                <executions>
-                    <execution>
-                        <id>analyze</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>analyze-only</goal>
-                        </goals>
-                        <configuration>
-                            <skip>${skip.analyze}</skip>
-                            <failOnWarning>${fail.on.analyze.warning}</failOnWarning>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
