@@ -35,4 +35,7 @@ pipeline {
             echo '✅ Build completed successfully.'
         }
         failure {
-            echo '❌ Build f
+            echo '❌ Build failed. Check console output.'
+        }
+    }
+}
