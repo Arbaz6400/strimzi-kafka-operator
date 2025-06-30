@@ -1,41 +1,41 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven 3.9.10'   // Update to match what's configured in Jenkins
-        jdk 'JDK 17'           // Update this name if needed
-    }
-
     environment {
-        MAVEN_OPTS = "-Dmaven.test.skip=true"
+        MAVEN_SETTINGS_DIR = "${HOME}/.m2"
+        MAVEN_SETTINGS_FILE = "${HOME}/.m2/settings.xml"
     }
 
     stages {
-        stage('Checkout') {
+        stage('Prepare Maven Settings') {
             steps {
-                checkout scm
+                script {
+                    sh '''
+                        mkdir -p $MAVEN_SETTINGS_DIR
+
+                        cat > $MAVEN_SETTINGS_FILE <<EOF
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 
+                              https://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <mirrors>
+        <mirror>
+            <id>central</id>
+            <mirrorOf>central</mirrorOf>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </mirror>
+    </mirrors>
+</settings>
+EOF
+                    '''
+                }
             }
         }
 
-        stage('Build Strimzi Kafka Operator') {
+        stage('Build with Maven') {
             steps {
-                sh 'mvn clean install -DskipTests'
+                sh 'mvn clean install -DskipTests -U'
             }
-        }
-
-        stage('Archive Artifacts') {
-            steps {
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-            }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ Build completed successfully.'
-        }
-        failure {
-            echo '❌ Build failed. Check console output.'
         }
     }
 }
